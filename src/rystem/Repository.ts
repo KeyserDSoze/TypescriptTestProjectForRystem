@@ -1,4 +1,6 @@
+import { BatchBuilder } from "./batch/BatchBuilder";
 import { IRepository } from "./IRepository";
+import { Query } from "./query/Query";
 import { RepositorySettings } from "./RepositorySettings";
 import { State } from "./State";
 
@@ -15,7 +17,12 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
         this.settings = settings;
     }
     get(key: TKey): Promise<T> {
-        return fetch(`${this.baseUri}/Get?key=${key}`)
+        return fetch(`${this.baseUri}/Get?key=${key}`,
+            {
+                method: 'GET',
+                headers: {
+                }
+            })
             .then(res => {
                 const json = res.json();
                 return json;
@@ -66,5 +73,47 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
             .then(res => {
                 return res as State<T, TKey>;
             })
+    }
+    exist(key: TKey): Promise<State<T, TKey>> {
+        return fetch(`${this.baseUri}/Exist?key=${key}`,
+            {
+                method: 'GET',
+                headers: {
+                }
+            })
+            .then(res => {
+                const json = res.json();
+                return json;
+            })
+            .catch((err) => {
+                return { isOk: false, message: err } as State<T, TKey>;
+            })
+            .then(res => {
+                return res as State<T, TKey>;
+            })
+    }
+    delete(key: TKey): Promise<State<T, TKey>> {
+        return fetch(`${this.baseUri}/Delete?key=${key}`,
+            {
+                method: 'GET',
+                headers: {
+                }
+            })
+            .then(res => {
+                const json = res.json();
+                return json;
+            })
+            .catch((err) => {
+                return { isOk: false, message: err } as State<T, TKey>;
+            })
+            .then(res => {
+                return res as State<T, TKey>;
+            })
+    }
+    batch(): BatchBuilder<T, TKey> {
+        return new BatchBuilder<T, TKey>(this.baseUri);
+    }
+    query(): Query<T, TKey> {
+        return new Query<T, TKey>(this.baseUri);
     }
 }

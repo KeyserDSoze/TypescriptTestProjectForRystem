@@ -1,4 +1,4 @@
-export interface State<T, TKey> {
+export type State<T, TKey> = {
     isOk: boolean;
     entity: {
         key: TKey;
