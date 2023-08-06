@@ -1,4 +1,5 @@
-import { IRepository, Repository } from "./Repository";
+import { Repository } from "./Repository";
+import { IRepository } from "./IRepository";
 import { RepositorySettings } from "./RepositorySettings";
 
 export class RepositoryServices {

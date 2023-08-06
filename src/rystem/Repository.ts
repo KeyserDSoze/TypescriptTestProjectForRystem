@@ -1,13 +1,6 @@
+import { IRepository } from "./IRepository";
 import { RepositorySettings } from "./RepositorySettings";
-
-export interface IRepository<T, TKey> {
-    get(key: TKey): Promise<T>;
-}
-
-export interface IEntity<T, TKey> {
-    Value: T;
-    Key: TKey;
-}
+import { State } from "./State";
 
 export class Repository<T, TKey> implements IRepository<T, TKey>
 {
@@ -31,8 +24,47 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
                 return null;
             })
             .then(res => {
-                return res as T
+                return res as T;
             })
-
+    }
+    insert(key: TKey, value: T): Promise<State<T, TKey>> {
+        return fetch(`${this.baseUri}/Insert?key=${key}`,
+            {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json;charset=UTF-8',
+                },
+                body: JSON.stringify(value),
+            })
+            .then(res => {
+                const json = res.json();
+                return json;
+            })
+            .catch((err) => {
+                return { isOk: false, message: err } as State<T, TKey>;
+            })
+            .then(res => {
+                return res as State<T, TKey>;
+            })
+    }
+    update(key: TKey, value: T): Promise<State<T, TKey>> {
+        return fetch(`${this.baseUri}/Update?key=${key}`,
+            {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json;charset=UTF-8',
+                },
+                body: JSON.stringify(value),
+            })
+            .then(res => {
+                const json = res.json();
+                return json;
+            })
+            .catch((err) => {
+                return { isOk: false, message: err } as State<T, TKey>;
+            })
+            .then(res => {
+                return res as State<T, TKey>;
+            })
     }
 }
