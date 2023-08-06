@@ -21,3 +21,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+/.vs/rystem.typescripttestproject/FileContentIndex
+/.vs/rystem.typescripttestproject/v17
+/package-lock.json
+/obj/Debug/rystem.typescripttestproject.esproj.FileListAbsolute.txt

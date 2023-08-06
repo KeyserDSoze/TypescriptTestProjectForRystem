@@ -1,2 +1,0 @@
-C:\Users\aless\source\repos\Rystem.TypescriptTestProject\Rystem.TypescriptTestProject\obj\Debug\rystem.typescripttestproject.esproj.SuggestedBindingRedirects.cache
-C:\Users\aless\source\repos\Rystem.TypescriptTestProject\Rystem.TypescriptTestProject\obj\Debug\rystem.typescripttestproject.esproj.CoreCompileInputs.cache
