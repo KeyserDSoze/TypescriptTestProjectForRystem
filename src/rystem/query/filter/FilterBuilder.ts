@@ -1,42 +1,111 @@
-import { Query } from "../Query";
+import { Entity } from "../../Entity";
+import { Repository } from "../../Repository";
+import { QueryBuilder } from "../QueryBuilder";
 
 export class FilterBuilder<T, TKey> {
-    private parenthesisCount: number;
+    private roundBracketsCount: number;
     private queryBuilder: Array<string>;
-    private query: Query<T, TKey>;
-    constructor(query: Query<T, TKey>) {
-        this.parenthesisCount = 0;
+    private query: QueryBuilder<T, TKey>;
+    constructor(query: QueryBuilder<T, TKey>) {
+        this.roundBracketsCount = 0;
         this.queryBuilder = new Array<string>();
+        this.queryBuilder.push("_rystem => ");
         this.query = query;
     }
     select(predicate: (value: T) => any): FilterBuilder<T, TKey> {
-        const splittedPredicate = predicate.toString().split('.');
-        const variableName = splittedPredicate.slice(-(splittedPredicate.length - 1)).join('.');
-        this.queryBuilder.push(variableName);
+        this.queryBuilder.push(Repository.predicateAsString<T>(predicate));
         return this;
     }
-    operator(operation: Operators): FilterBuilder<T, TKey> {
+    private operator(operation: Operators, value: any | null): FilterBuilder<T, TKey> {
         switch (operation) {
             case Operators.Equal:
                 this.queryBuilder.push(" == ");
+                this.queryBuilder.push(this.valueAsString(value));
                 break;
             case Operators.NotEqual:
                 this.queryBuilder.push(" != ");
+                this.queryBuilder.push(this.valueAsString(value));
+                break;
+            case Operators.GreaterThan:
+                this.queryBuilder.push(" > ");
+                this.queryBuilder.push(this.valueAsString(value));
+                break;
+            case Operators.GreaterThanOrEqual:
+                this.queryBuilder.push(" >= ");
+                this.queryBuilder.push(this.valueAsString(value));
+                break;
+            case Operators.LesserThan:
+                this.queryBuilder.push(" < ");
+                this.queryBuilder.push(this.valueAsString(value));
+                break;
+            case Operators.LesserThanOrEqual:
+                this.queryBuilder.push(" <= ");
+                this.queryBuilder.push(this.valueAsString(value));
+                break;
+            case Operators.Contains:
+                this.queryBuilder.push(".Contains(");
+                this.queryBuilder.push(this.valueAsString(value));
+                this.queryBuilder.push(")");
+                break;
+            case Operators.StartsWith:
+                this.queryBuilder.push(".StartsWith(");
+                this.queryBuilder.push(this.valueAsString(value));
+                this.queryBuilder.push(")");
+                break;
+            case Operators.EndsWith:
+                this.queryBuilder.push(".EndsWith(");
+                this.queryBuilder.push(this.valueAsString(value));
+                this.queryBuilder.push(")");
                 break;
         }
         return this;
     }
-    value(v: any | null): FilterBuilder<T, TKey> {
+    private valueAsString(v: any | null): string {
         if (v != null) {
             if (typeof v == 'number') {
-                this.queryBuilder.push(v.toString());
+                return v.toString();
             } else {
-                this.queryBuilder.push(`"${v.toString()}"`);
+                return `"${v.toString()}"`;
             }
         }
         else
-            this.queryBuilder.push("null");
-        return this;
+            return "null";
+    }
+    equal(value: any | null): FilterBuilder<T, TKey> {
+        return this
+            .operator(Operators.Equal, value);
+    }
+    notEqual(value: any | null): FilterBuilder<T, TKey> {
+        return this
+            .operator(Operators.NotEqual, value);
+    }
+    greaterThan(value: any | null): FilterBuilder<T, TKey> {
+        return this
+            .operator(Operators.GreaterThan, value);
+    }
+    greaterThanOrEqual(value: any | null): FilterBuilder<T, TKey> {
+        return this
+            .operator(Operators.GreaterThanOrEqual, value);
+    }
+    lesserThan(value: any | null): FilterBuilder<T, TKey> {
+        return this
+            .operator(Operators.LesserThan, value);
+    }
+    lesserThanOrEqual(value: any | null): FilterBuilder<T, TKey> {
+        return this
+            .operator(Operators.LesserThanOrEqual, value);
+    }
+    startsWith(value: any | null): FilterBuilder<T, TKey> {
+        return this
+            .operator(Operators.StartsWith, value);
+    }
+    endsWith(value: any | null): FilterBuilder<T, TKey> {
+        return this
+            .operator(Operators.EndsWith, value);
+    }
+    contains(value: any | null): FilterBuilder<T, TKey> {
+        return this
+            .operator(Operators.Contains, value);
     }
     and(): FilterBuilder<T, TKey> {
         this.queryBuilder.push(" && ");
@@ -46,12 +115,29 @@ export class FilterBuilder<T, TKey> {
         this.queryBuilder.push(" || ");
         return this;
     }
-    build(): Query<T, TKey> {
+    openRoundBracket(): FilterBuilder<T, TKey> {
+        this.queryBuilder.push("(");
+        this.roundBracketsCount++;
+        return this;
+    }
+    closeRoundBracket(): FilterBuilder<T, TKey> {
+        this.queryBuilder.push(")");
+        this.roundBracketsCount--;
+        return this;
+    }
+    build(): QueryBuilder<T, TKey> {
+        for (let i = 0; i < this.roundBracketsCount; i++) {
+            this.queryBuilder.push(")");
+        }
+        this.roundBracketsCount = 0;
         return this.query.filter(this.queryBuilder.join(''));
+    }
+    execute(): Promise<Array<Entity<T, TKey>>> {
+        return this.build().execute();
     }
 }
 
-export enum Operators {
+enum Operators {
     Equal = 1,
     NotEqual = 2,
     GreaterThan = 3,

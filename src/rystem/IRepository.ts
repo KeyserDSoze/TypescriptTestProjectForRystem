@@ -1,5 +1,5 @@
 ﻿import { BatchBuilder } from "./batch/BatchBuilder";
-import { Query } from "./query/Query";
+import { QueryBuilder } from "./query/QueryBuilder";
 import { State } from "./State";
 
 export interface IRepository<T, TKey> {
@@ -9,5 +9,5 @@ export interface IRepository<T, TKey> {
     delete(key: TKey): Promise<State<T, TKey>>;
     exist(key: TKey): Promise<State<T, TKey>>;
     batch(): BatchBuilder<T, TKey>;
-    query(): Query<T, TKey>;
+    query(): QueryBuilder<T, TKey>;
 }

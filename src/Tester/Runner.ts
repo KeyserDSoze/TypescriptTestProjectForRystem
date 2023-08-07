@@ -1,7 +1,6 @@
 import { IperUser } from "../Models/IperUser";
 import { SuperUser } from "../Models/SuperUser";
 import { BatchResults } from "../rystem/batch/BatchResults";
-import { Operators } from "../rystem/query/filter/FilterBuilder";
 import { RepositoryServices } from "../rystem/RepositoryServices";
 import { State } from "../rystem/State";
 
@@ -67,10 +66,20 @@ export async function Runner() {
     console.log(queryResults);
     queryResults = await repository.query()
         .filterBuilder()
+        .openRoundBracket()
         .select(x => x.id)
-        .operator(Operators.Equal)
-        .value(id)
+        .equal(id)
         .build()
+        .orderBy(x => x.name)
         .execute();
     console.log(queryResults);
+    const count = await repository
+        .query()
+        .filterBuilder()
+        .openRoundBracket()
+        .select(x => x.id)
+        .equal(id)
+        .build()
+        .sum();
+    console.log(count);
 }
