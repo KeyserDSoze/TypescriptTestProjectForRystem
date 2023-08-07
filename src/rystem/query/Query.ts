@@ -1,4 +1,5 @@
 import { Entity } from "../Entity";
+import { FilterBuilder } from "./filter/FilterBuilder";
 import { FilterOperationAsString } from "./FilterOperationAsString";
 import { FilterOperations } from "./FilterOperations";
 import { SerializableFilter } from "./SerializableFilter";
@@ -12,13 +13,13 @@ export class Query<T, TKey> {
         } as SerializableFilter;
         this.baseUri = baseUri;
     }
-    filter(predicate: (value: T) => boolean): Query<T, TKey> {
-        console.log(predicate);
-        let q: T = {} as T;
-        
+    filterBuilder(): FilterBuilder<T, TKey> {
+        return new FilterBuilder<T, TKey>(this);
+    }
+    filter(predicate: string): Query<T, TKey> {
         this.filters.o.push({
             q: FilterOperations.Where,
-            v: predicate.toString()
+            v: predicate
         } as FilterOperationAsString);
         return this;
     }

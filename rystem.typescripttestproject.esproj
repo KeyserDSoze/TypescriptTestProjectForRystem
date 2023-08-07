@@ -12,6 +12,7 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\build</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="src\rystem\query\filter\" />
     <Folder Include="src\Tester\" />
   </ItemGroup>
 </Project>
