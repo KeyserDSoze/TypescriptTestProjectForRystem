@@ -1,9 +1,9 @@
 export type State<T, TKey> = {
     isOk: boolean;
-    entity: {
+    e: {
         key: TKey;
         value: T;
     },
-    code: number | null,
-    message: string | null
+    c: number | null,
+    m: string | null
 }

@@ -57,7 +57,7 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
         }
     }
     insert(key: TKey, value: T): Promise<State<T, TKey>> {
-        if (this.settings.complexKey) {
+        if (!this.settings.complexKey) {
             return fetch(`${this.baseUri}/Insert?key=${key}`,
                 {
                     method: 'POST',
@@ -71,7 +71,7 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
                     return json;
                 })
                 .catch((err) => {
-                    return { isOk: false, message: err } as State<T, TKey>;
+                    return { isOk: false, m: err } as State<T, TKey>;
                 })
                 .then(res => {
                     return res as State<T, TKey>;
@@ -93,7 +93,7 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
                     return json;
                 })
                 .catch((err) => {
-                    return { isOk: false, message: err } as State<T, TKey>;
+                    return { isOk: false, m: err } as State<T, TKey>;
                 })
                 .then(res => {
                     return res as State<T, TKey>;
@@ -101,7 +101,7 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
         }
     }
     update(key: TKey, value: T): Promise<State<T, TKey>> {
-        if (this.settings.complexKey) {
+        if (!this.settings.complexKey) {
             return fetch(`${this.baseUri}/Update?key=${key}`,
                 {
                     method: 'POST',
@@ -115,7 +115,7 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
                     return json;
                 })
                 .catch((err) => {
-                    return { isOk: false, message: err } as State<T, TKey>;
+                    return { isOk: false, m: err } as State<T, TKey>;
                 })
                 .then(res => {
                     return res as State<T, TKey>;
@@ -137,7 +137,7 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
                     return json;
                 })
                 .catch((err) => {
-                    return { isOk: false, message: err } as State<T, TKey>;
+                    return { isOk: false, m: err } as State<T, TKey>;
                 })
                 .then(res => {
                     return res as State<T, TKey>;
@@ -145,7 +145,7 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
         }
     }
     exist(key: TKey): Promise<State<T, TKey>> {
-        if (this.settings.complexKey) {
+        if (!this.settings.complexKey) {
             return fetch(`${this.baseUri}/Exist?key=${key}`,
                 {
                     method: 'GET',
@@ -157,7 +157,7 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
                     return json;
                 })
                 .catch((err) => {
-                    return { isOk: false, message: err } as State<T, TKey>;
+                    return { isOk: false, m: err } as State<T, TKey>;
                 })
                 .then(res => {
                     return res as State<T, TKey>;
@@ -176,7 +176,7 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
                     return json;
                 })
                 .catch((err) => {
-                    return { isOk: false, message: err } as State<T, TKey>;
+                    return { isOk: false, m: err } as State<T, TKey>;
                 })
                 .then(res => {
                     return res as State<T, TKey>;
@@ -184,7 +184,7 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
         }
     }
     delete(key: TKey): Promise<State<T, TKey>> {
-        if (this.settings.complexKey) {
+        if (!this.settings.complexKey) {
             return fetch(`${this.baseUri}/Delete?key=${key}`,
                 {
                     method: 'GET',
@@ -196,7 +196,7 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
                     return json;
                 })
                 .catch((err) => {
-                    return { isOk: false, message: err } as State<T, TKey>;
+                    return { isOk: false, m: err } as State<T, TKey>;
                 })
                 .then(res => {
                     return res as State<T, TKey>;
@@ -215,7 +215,7 @@ export class Repository<T, TKey> implements IRepository<T, TKey>
                     return json;
                 })
                 .catch((err) => {
-                    return { isOk: false, message: err } as State<T, TKey>;
+                    return { isOk: false, m: err } as State<T, TKey>;
                 })
                 .then(res => {
                     return res as State<T, TKey>;

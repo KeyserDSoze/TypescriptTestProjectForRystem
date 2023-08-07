@@ -1,6 +1,6 @@
 import { Entity } from "../Entity";
 import { Repository } from "../Repository";
-import { FilterBuilder } from "./filter/FilterBuilder";
+import { WhereBuilder } from "./filter/WhereBuilder";
 import { FilterOperationAsString } from "./FilterOperationAsString";
 import { FilterOperations } from "./FilterOperations";
 import { SerializableFilter } from "./SerializableFilter";
@@ -14,8 +14,8 @@ export class QueryBuilder<T, TKey> {
         } as SerializableFilter;
         this.baseUri = baseUri;
     }
-    filterBuilder(): FilterBuilder<T, TKey> {
-        return new FilterBuilder<T, TKey>(this);
+    where(): WhereBuilder<T, TKey> {
+        return new WhereBuilder<T, TKey>(this);
     }
     filter(predicate: string): QueryBuilder<T, TKey> {
         this.filters.o.push({
@@ -89,16 +89,32 @@ export class QueryBuilder<T, TKey> {
     count(): Promise<number> {
         return this.executeOperation("Count", "long");
     }
-    max(): Promise<number> {
+    max(predicate: (value: T) => any): Promise<number> {
+        this.filters.o.push({
+            q: FilterOperations.Select,
+            v: `_rystem => ${Repository.predicateAsString<T>(predicate)}`
+        } as FilterOperationAsString);
         return this.executeOperation("Max", "decimal");
     }
-    min(): Promise<number> {
+    min(predicate: (value: T) => any): Promise<number> {
+        this.filters.o.push({
+            q: FilterOperations.Select,
+            v: `_rystem => ${Repository.predicateAsString<T>(predicate)}`
+        } as FilterOperationAsString);
         return this.executeOperation("Min", "decimal");
     }
-    average(): Promise<number> {
+    average(predicate: (value: T) => any): Promise<number> {
+        this.filters.o.push({
+            q: FilterOperations.Select,
+            v: `_rystem => ${Repository.predicateAsString<T>(predicate)}`
+        } as FilterOperationAsString);
         return this.executeOperation("Average", "decimal");
     }
-    sum(): Promise<number> {
+    sum(predicate: (value: T) => any): Promise<number> {
+        this.filters.o.push({
+            q: FilterOperations.Select,
+            v: `_rystem => ${Repository.predicateAsString<T>(predicate)}`
+        } as FilterOperationAsString);
         return this.executeOperation("Sum", "decimal");
     }
     private executeOperation(operation: string, returnType: string): Promise<number> {

@@ -2,7 +2,7 @@ import { Entity } from "../../Entity";
 import { Repository } from "../../Repository";
 import { QueryBuilder } from "../QueryBuilder";
 
-export class FilterBuilder<T, TKey> {
+export class WhereBuilder<T, TKey> {
     private roundBracketsCount: number;
     private queryBuilder: Array<string>;
     private query: QueryBuilder<T, TKey>;
@@ -12,11 +12,11 @@ export class FilterBuilder<T, TKey> {
         this.queryBuilder.push("_rystem => ");
         this.query = query;
     }
-    select(predicate: (value: T) => any): FilterBuilder<T, TKey> {
+    select(predicate: (value: T) => any): WhereBuilder<T, TKey> {
         this.queryBuilder.push(Repository.predicateAsString<T>(predicate));
         return this;
     }
-    private operator(operation: Operators, value: any | null): FilterBuilder<T, TKey> {
+    private operator(operation: Operators, value: any | null): WhereBuilder<T, TKey> {
         switch (operation) {
             case Operators.Equal:
                 this.queryBuilder.push(" == ");
@@ -71,56 +71,56 @@ export class FilterBuilder<T, TKey> {
         else
             return "null";
     }
-    equal(value: any | null): FilterBuilder<T, TKey> {
+    equal(value: any | null): WhereBuilder<T, TKey> {
         return this
             .operator(Operators.Equal, value);
     }
-    notEqual(value: any | null): FilterBuilder<T, TKey> {
+    notEqual(value: any | null): WhereBuilder<T, TKey> {
         return this
             .operator(Operators.NotEqual, value);
     }
-    greaterThan(value: any | null): FilterBuilder<T, TKey> {
+    greaterThan(value: any | null): WhereBuilder<T, TKey> {
         return this
             .operator(Operators.GreaterThan, value);
     }
-    greaterThanOrEqual(value: any | null): FilterBuilder<T, TKey> {
+    greaterThanOrEqual(value: any | null): WhereBuilder<T, TKey> {
         return this
             .operator(Operators.GreaterThanOrEqual, value);
     }
-    lesserThan(value: any | null): FilterBuilder<T, TKey> {
+    lesserThan(value: any | null): WhereBuilder<T, TKey> {
         return this
             .operator(Operators.LesserThan, value);
     }
-    lesserThanOrEqual(value: any | null): FilterBuilder<T, TKey> {
+    lesserThanOrEqual(value: any | null): WhereBuilder<T, TKey> {
         return this
             .operator(Operators.LesserThanOrEqual, value);
     }
-    startsWith(value: any | null): FilterBuilder<T, TKey> {
+    startsWith(value: any | null): WhereBuilder<T, TKey> {
         return this
             .operator(Operators.StartsWith, value);
     }
-    endsWith(value: any | null): FilterBuilder<T, TKey> {
+    endsWith(value: any | null): WhereBuilder<T, TKey> {
         return this
             .operator(Operators.EndsWith, value);
     }
-    contains(value: any | null): FilterBuilder<T, TKey> {
+    contains(value: any | null): WhereBuilder<T, TKey> {
         return this
             .operator(Operators.Contains, value);
     }
-    and(): FilterBuilder<T, TKey> {
+    and(): WhereBuilder<T, TKey> {
         this.queryBuilder.push(" && ");
         return this;
     }
-    or(): FilterBuilder<T, TKey> {
+    or(): WhereBuilder<T, TKey> {
         this.queryBuilder.push(" || ");
         return this;
     }
-    openRoundBracket(): FilterBuilder<T, TKey> {
+    openRoundBracket(): WhereBuilder<T, TKey> {
         this.queryBuilder.push("(");
         this.roundBracketsCount++;
         return this;
     }
-    closeRoundBracket(): FilterBuilder<T, TKey> {
+    closeRoundBracket(): WhereBuilder<T, TKey> {
         this.queryBuilder.push(")");
         this.roundBracketsCount--;
         return this;

@@ -7,16 +7,16 @@ import { State } from "../rystem/State";
 export async function Runner() {
     RepositoryServices
         .Create("https://localhost:7058/api/")
-        .AddRepository<IperUser, string>(x => {
+        .addRepository<IperUser, string>(x => {
             x.name = "test";
             x.path = "SuperUser";
         })
-        .AddRepository<SuperUser, string>(x => {
+        .addRepository<SuperUser, string>(x => {
             x.name = "test2"
             x.path = "SuperUser/inmemory";
         });
     const repository = RepositoryServices
-        .Instance<IperUser, string>("test");
+        .Repository<IperUser, string>("test");
     const x = Math.floor(Math.random() * (30000 - 0 + 1)) + 0;
     const id = `${x}_Key_4942b090-f6a0-45a4-a188-286807f6bb9c`;
     const iperUser = {
@@ -65,7 +65,7 @@ export async function Runner() {
     queryResults = await repository.query().filter(`x => x.id == "${id}"`).execute();
     console.log(queryResults);
     queryResults = await repository.query()
-        .filterBuilder()
+        .where()
         .openRoundBracket()
         .select(x => x.id)
         .equal(id)
@@ -75,11 +75,39 @@ export async function Runner() {
     console.log(queryResults);
     const count = await repository
         .query()
-        .filterBuilder()
+        .where()
         .openRoundBracket()
         .select(x => x.id)
         .equal(id)
         .build()
-        .sum();
+        .count();
     console.log(count);
+    const sum = await repository
+        .query()
+        .where()
+        .openRoundBracket()
+        .select(x => x.id)
+        .equal(id)
+        .build()
+        .sum(x => x.port);
+    console.log(sum);
+    const portGreaterThanZero = await repository
+        .query()
+        .where()
+        .openRoundBracket()
+        .select(x => x.port)
+        .greaterThanOrEqual(0)
+        .build()
+        .count();
+    console.log(portGreaterThanZero);
+    const portGreaterThanZeroOrderedByName = await repository
+        .query()
+        .where()
+        .openRoundBracket()
+        .select(x => x.port)
+        .greaterThanOrEqual(0)
+        .build()
+        .orderBy(x => x.name)
+        .execute();
+    console.log(portGreaterThanZeroOrderedByName);
 }
